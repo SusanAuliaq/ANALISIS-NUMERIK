@@ -1,0 +1,39 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+#Data 
+x = np.array([10, 20, 30, 40])  #Ukuran Aplikasi
+y = np.array([2.5, 4, 5, 6.5])  #Waktu Muat
+
+#Hitung parameter regresi
+n = len(x)
+x_mean = np.mean(x)
+y_mean = np.mean(y)
+
+# Rumus slope (b1) dan intercept (b0)
+b1 = np.sum((x - x_mean) * (y - y_mean)) / np.sum((x - x_mean) ** 2)
+b0 = y_mean - b1 * x_mean
+
+print ("persamaan regresi: y = {:.2f}x + {:.2f}".format(b1, b0))
+
+# Contoh prediksi (misalnya ukuran 25 MB)=
+x_prediction = 25
+y_prediction = b0 + b1 * x_prediction
+print ("prediksi waktu muat untuk ukuran 25 MB =", y_prediction)
+print()
+
+# Membuat grafik regresi
+x_line = np.linspace(min(x), max(x), 200)
+y_line = b0 + b1 * x_line
+
+plt.figure(figsize=(8, 5))
+plt.scatter(x, y, color='blue', label='Data Asli')
+plt.plot(x_line, y_line, label='Garis Regresi', linewidth=2)
+plt.scatter([x_prediction], [y_prediction], color='red', label='Prediksi (25 MB)', zorder=5)
+
+plt.title("Grafik Regresi Linear")
+plt.xlabel("Ukuran Aplikasi (MB)")
+plt.ylabel("Waktu Muat (detik)")
+plt.legend()
+plt.grid(True)
+plt.show()
