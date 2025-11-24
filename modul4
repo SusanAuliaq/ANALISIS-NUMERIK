@@ -1,0 +1,92 @@
+# POLINOMIAL LAGRANGE
+import numpy as np
+import matplotlib.pyplot as plt
+# Data titik
+x = np.array([1.0, 2.0, 3.0])
+y = np.array([3.0, 8.0, 15.0])
+xp = 2.5
+
+# Fungsi interpolasi Lagrange
+def lagrange_interpolation(x, y, xp):
+  P = 0.0
+  n = len(x)
+  for i in range(n):
+    L = 1.0
+    for j in range(n):
+      if j != i:
+        L *= (xp - x[j]) / (x[i] - x[j])
+    P += y[i] * L
+  return P
+
+# Hitung nilai f(2.5)
+L_value = lagrange_interpolation(x, y, xp)
+print ("Lagrange f(2.5) =", L_value)
+
+# -----Grafik-----
+x_plot = np.linspace(min(x), max(x), 100)
+y_plot = [lagrange_interpolation(x, y, x_val) for x_val in x_plot]
+plt.plot(x_plot, y_plot, label='Interpolasi Lagrange')
+plt.scatter(x, y, color='red', label='Data')
+plt.scatter(xp, L_value, color='green', label='f(2.5)')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.legend()
+plt.show()
+
+
+
+
+# POLINOMIAL NEWTON
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Data titik
+x = np.array([1.0, 2.0, 3.0])
+y = np.array([3.0, 8.0, 15.0])
+xp = 2.5
+
+# Fungsi Newton dengan tabel divided difference menggunakan zeros
+def newton_divided_difference(x, y):
+    n = len(x)
+    # Buat tabel n×n penuh dengan nol
+    table = np.zeros((n, n))
+    # Kolom pertama = nilai y
+    table[:, 0] = y
+
+    # Mengisi tabel selisih terbagi
+    for j in range(1, n):
+        for i in range(n - j):
+            table[i][j] = (table[i+1][j-1] - table[i][j-1]) / (x[i+j] - x[i])
+
+    return table
+
+# Evaluasi polinom Newton
+def newton_interpolation(x, table, xp):
+    n = len(x)
+    result = table[0, 0]
+    product = 1.0
+
+    for j in range(1, n):
+        product *= (xp - x[j-1])
+        result += table[0, j] * product
+    return result
+
+# Hitung tabel dan nilai
+table = newton_divided_difference(x, y)
+N_value = newton_interpolation(x, table, xp)
+
+print("Newton f(2.5) =", N_value)
+print("\nTabel Selisih Terbagi:")
+print(table)
+
+# -----Grafik-----
+x_plot = np.linspace(min(x), max(x), 100)
+y_plot = [newton_interpolation(x, table, xv) for xv in x_plot]
+
+plt.plot(x_plot, y_plot, label='Interpolasi Newton')
+plt.scatter(x, y, color='red', label='Data')
+plt.scatter(xp, N_value, color='green', label='f(2.5)')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.legend()
+plt.show()
